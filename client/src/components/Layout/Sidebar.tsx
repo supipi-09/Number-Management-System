@@ -10,14 +10,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import {
-  Dashboard,
-  Numbers,
-  People,
-  FileUpload,
-  History,
-  Analytics,
-} from "@mui/icons-material";
+import { Dashboard, Numbers, PersonAdd } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -44,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       roles: ["admin", "planner"],
     },
     {
-      text: "Number Management",
+      text: "Numbers",
       icon: <Numbers />,
       path: "/numbers",
       roles: ["admin", "planner"],
@@ -65,12 +58,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       text: "Add Planner",
       icon: <People />,
       path: "/users",
-      roles: ["admin"],
-    },
-    {
-      text: "Data Import",
-      icon: <FileUpload />,
-      path: "/import",
       roles: ["admin"],
     },
   ];

@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             variant="body2"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            {user?.role === "admin" ? "Administrator" : "Number Manager"}
+            {user?.role === "admin" ? "Administrator" : "Planner"}
           </Typography>
 
           <Button
