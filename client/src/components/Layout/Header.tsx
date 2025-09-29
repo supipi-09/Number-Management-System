@@ -1,121 +1,37 @@
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Avatar,
-  Menu,
-  MenuItem,
-  Divider,
-  ListItemIcon,
-  ListItemText,
-  IconButton,
-} from "@mui/material";
-import {
-  AccountCircle,
-  Logout,
-  Settings,
-  Dashboard,
-  Menu as MenuIcon,
-} from "@mui/icons-material";
-import { useAuth } from "../../contexts/AuthContext";
+import { User, Bell, LogOut } from "lucide-react";
 
 interface HeaderProps {
-  onMenuClick: () => void;
+  userRole: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
-  const { user, logout } = useAuth();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    logout();
-    handleClose();
-  };
-
+const Header: React.FC<HeaderProps> = ({ userRole }) => {
   return (
-    <AppBar position="static" elevation={1}>
-      <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={onMenuClick}
-          edge="start"
-          sx={{ mr: 2, display: { sm: "none" } }}
-        >
-          <MenuIcon />
-        </IconButton>
-
-        <Dashboard sx={{ mr: 2 }} />
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, fontWeight: 600 }}
-        >
-          Number Management System
-        </Typography>
-
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Typography
-            variant="body2"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            {user?.role === "admin" ? "Administrator" : "Planner"}
-          </Typography>
-
-          <Button
-            color="inherit"
-            onClick={handleMenu}
-            startIcon={
-              <Avatar sx={{ width: 32, height: 32 }}>
-                {user?.username?.charAt(0).toUpperCase()}
-              </Avatar>
-            }
-            sx={{ textTransform: "none" }}
-          >
-            {user?.username}
-          </Button>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-          >
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <AccountCircle fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Profile</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <Settings fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Settings</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem onClick={handleLogout}>
-              <ListItemIcon>
-                <Logout fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Logout</ListItemText>
-            </MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
+    <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-800">
+          Number Management Dashboard
+        </h1>
+        <div className="flex items-center gap-4">
+          <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <Bell size={20} />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          <div className="flex items-center gap-3 pl-4 border-l border-gray-300">
+            <div className="text-right">
+              <p className="text-sm font-medium">Admin User</p>
+              <p className="text-xs text-gray-500">{userRole}</p>
+            </div>
+            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+              <User size={20} />
+            </div>
+          </div>
+          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600">
+            <LogOut size={20} />
+          </button>
+        </div>
+      </div>
+    </header>
   );
 };
 

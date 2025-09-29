@@ -29,20 +29,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // For demo purposes, simulate authenticated user without backend
-    const initAuth = () => {
-      const mockUser = {
-        _id: "demo-user",
-        username: "demo",
-        email: "demo@example.com",
-        role: "admin" as const,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    // Check for stored user session
+    const initAuth = async () => {
+      const token = localStorage.getItem("token");
+      const storedUser = localStorage.getItem("user");
 
-      setUser(mockUser);
-      setIsAuthenticated(true);
+      if (token && storedUser) {
+        try {
+          const userData = JSON.parse(storedUser);
+          // Verify token is still valid
+          const response = await authAPI.getMe();
+          if (response.success && response.data) {
+            setUser(response.data);
+            setIsAuthenticated(true);
+          } else {
+            // Token invalid, clear storage
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+          }
+        } catch (error) {
+          // Token invalid, clear storage
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        }
+      }
       setLoading(false);
     };
 
