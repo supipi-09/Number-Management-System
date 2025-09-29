@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, Box } from '@mui/material';
-import { theme } from './theme';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ThemeProvider, CssBaseline, Box } from "@mui/material";
+import { theme } from "./theme";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 // Components
-import Header from './components/Layout/Header';
-import Sidebar from './components/Layout/Sidebar';
-import LoginPage from './components/Auth/LoginPage';
-import DashboardPage from './components/Dashboard/DashboardPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import Header from "./components/Layout/Header";
+import Sidebar from "./components/Layout/Sidebar";
+import LoginPage from "./components/Auth/LoginPage";
+import DashboardPage from "./components/Dashboard/DashboardPage";
+import UserManagementPage from "./components/Users/UserManagementPage";
+import NumberManagementPage from "./components/Numbers/NumberManagementPage";
+import ActivityLogsPage from "./components/Logs/ActivityLogsPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const AppContent: React.FC = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -24,11 +32,11 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <Box sx={{ flex: 1, bgcolor: 'background.default' }}>
+
+      <Box sx={{ flex: 1, bgcolor: "background.default" }}>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route
@@ -43,7 +51,7 @@ const AppContent: React.FC = () => {
             path="/numbers"
             element={
               <ProtectedRoute>
-                <div style={{ padding: '2rem' }}>Number Management - Coming Soon</div>
+                <NumberManagementPage />
               </ProtectedRoute>
             }
           />
@@ -51,7 +59,7 @@ const AppContent: React.FC = () => {
             path="/logs"
             element={
               <ProtectedRoute>
-                <div style={{ padding: '2rem' }}>Activity Logs - Coming Soon</div>
+                <ActivityLogsPage />
               </ProtectedRoute>
             }
           />
@@ -59,7 +67,7 @@ const AppContent: React.FC = () => {
             path="/users"
             element={
               <ProtectedRoute requireAdmin>
-                <div style={{ padding: '2rem' }}>User Management - Coming Soon</div>
+                <UserManagementPage />
               </ProtectedRoute>
             }
           />
@@ -67,7 +75,7 @@ const AppContent: React.FC = () => {
             path="/import"
             element={
               <ProtectedRoute requireAdmin>
-                <div style={{ padding: '2rem' }}>Data Import - Coming Soon</div>
+                <div style={{ padding: "2rem" }}>Data Import - Coming Soon</div>
               </ProtectedRoute>
             }
           />

@@ -5,6 +5,7 @@ import {
   getNumber,
   createNumber,
   updateNumber,
+  deleteNumber,
   importNumbers,
   getNumberStats,
 } from "../controllers/numbersController";
@@ -52,5 +53,6 @@ router.put(
 // Admin only routes
 router.post("/", requireAdmin, validateNumberCreation, createNumber);
 router.post("/import", requireAdmin, upload.single("file"), importNumbers);
+router.delete("/:id", requireAdmin, deleteNumber);
 
 export default router;

@@ -68,6 +68,14 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const { username, email, password, role } = req.body;
 
+    // Validate required fields
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username, email, and password are required",
+      });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({
       $or: [{ username }, { email }],
@@ -80,12 +88,12 @@ export const createUser = async (req: Request, res: Response) => {
       });
     }
 
-    // Create new user
+    // Create new user (default role is planner)
     const user = new User({
       username,
       email,
       password,
-      role: role || "number_manager",
+      role: role || "planner",
     });
 
     await user.save();
@@ -95,6 +103,7 @@ export const createUser = async (req: Request, res: Response) => {
       data: user,
       message: "User created successfully",
     });
+    return;
   } catch (error) {
     console.error("Create user error:", error);
     res.status(500).json({
@@ -129,12 +138,14 @@ export const updateUser = async (req: Request, res: Response) => {
       data: user,
       message: "User updated successfully",
     });
+    return;
   } catch (error) {
     console.error("Update user error:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
     });
+    return;
   }
 };
 
@@ -167,15 +178,16 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
 
     res.json({
       success: true,
-      data: user,
-      message: "User deactivated successfully",
+      message: "User deleted successfully",
     });
+    return;
   } catch (error) {
     console.error("Delete user error:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
     });
+    return;
   }
 };
 

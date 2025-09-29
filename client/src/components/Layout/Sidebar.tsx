@@ -41,19 +41,19 @@ const Sidebar: React.FC<SidebarProps> = ({
       text: "Dashboard",
       icon: <Dashboard />,
       path: "/dashboard",
-      roles: ["admin", "number_manager"],
+      roles: ["admin", "planner"],
     },
     {
       text: "Number Management",
       icon: <Numbers />,
       path: "/numbers",
-      roles: ["admin", "number_manager"],
+      roles: ["admin", "planner"],
     },
     {
-      text: "Activity Logs",
+      text: "Number Allocation Log",
       icon: <History />,
       path: "/logs",
-      roles: ["admin", "number_manager"],
+      roles: ["admin", "planner"],
     },
     {
       text: "Analytics",
@@ -62,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       roles: ["admin"],
     },
     {
-      text: "User Management",
+      text: "Add Planner",
       icon: <People />,
       path: "/users",
       roles: ["admin"],
@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const filteredMenuItems = menuItems.filter((item) =>
-    item.roles.includes(isAdmin ? "admin" : "number_manager")
+    item.roles.includes(isAdmin ? "admin" : "planner")
   );
 
   const drawerContent = (

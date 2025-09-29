@@ -23,7 +23,13 @@ export interface NumberRecord {
 export interface NumberLog {
   _id: string;
   number: string;
-  action: "Allocated" | "Released" | "Reserved" | "Status Changed" | "Created";
+  action:
+    | "Allocated"
+    | "Released"
+    | "Reserved"
+    | "Status Changed"
+    | "Created"
+    | "Deleted";
   performedBy: {
     _id: string;
     username: string;

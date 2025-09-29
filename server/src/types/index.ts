@@ -24,7 +24,13 @@ export interface INumber extends Document {
 
 export interface INumberLog extends Document {
   number: string;
-  action: "Allocated" | "Released" | "Reserved" | "Status Changed" | "Created";
+  action:
+    | "Allocated"
+    | "Released"
+    | "Reserved"
+    | "Status Changed"
+    | "Created"
+    | "Deleted";
   performedBy: IUser["_id"];
   timestamp: Date;
   previousState?: Partial<INumber>;
