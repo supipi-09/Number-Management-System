@@ -1,0 +1,20 @@
+{
+  "name": "number-management-system",
+  "version": "1.0.0",
+  "description": "Complete Number Management System with Client and Server",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "client:dev": "cd client && npm run dev",
+    "server:dev": "cd server && npm run dev",
+    "client:build": "cd client && npm run build",
+    "server:build": "cd server && npm run build",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "seed": "cd server && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["number-management", "telecom", "dashboard", "react", "nodejs"],
+  "author": "Number Management System",
+  "license": "MIT"
+}
