@@ -30,8 +30,8 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["admin", "number_manager"],
-      default: "number_manager",
+      enum: ["admin", "planner"],
+      default: "planner",
     },
     isActive: {
       type: Boolean,

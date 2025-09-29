@@ -10,10 +10,6 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Dashboard } from "@mui/icons-material";
 import { useAuth } from "../../contexts/AuthContext";
@@ -21,22 +17,10 @@ import { useAuth } from "../../contexts/AuthContext";
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-
-  const handleRoleChange = (role: string) => {
-    setSelectedRole(role);
-    if (role === "admin") {
-      setUsername("admin");
-      setPassword("admin123");
-    } else if (role === "number_manager") {
-      setUsername("numbermanager");
-      setPassword("manager123");
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,21 +90,6 @@ const LoginPage: React.FC = () => {
           )}
 
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Demo Role (Optional)</InputLabel>
-              <Select
-                value={selectedRole}
-                label="Demo Role (Optional)"
-                onChange={(e) => handleRoleChange(e.target.value)}
-                disabled={loading}
-              >
-                <MenuItem value="">
-                  <em>Select role to auto-fill credentials</em>
-                </MenuItem>
-                <MenuItem value="admin">Admin</MenuItem>
-                <MenuItem value="number_manager">Number Manager</MenuItem>
-              </Select>
-            </FormControl>
             <TextField
               margin="normal"
               required
