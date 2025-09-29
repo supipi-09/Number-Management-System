@@ -9,6 +9,8 @@ import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import LoginPage from './components/Auth/LoginPage';
 import DashboardPage from './components/Dashboard/DashboardPage';
+import NumberManagementPage from './components/Numbers/NumberManagementPage';
+import UserManagementPage from './components/Users/UserManagementPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const AppContent: React.FC = () => {
@@ -43,15 +45,7 @@ const AppContent: React.FC = () => {
             path="/numbers"
             element={
               <ProtectedRoute>
-                <div style={{ padding: '2rem' }}>Number Management - Coming Soon</div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logs"
-            element={
-              <ProtectedRoute>
-                <div style={{ padding: '2rem' }}>Activity Logs - Coming Soon</div>
+                <NumberManagementPage />
               </ProtectedRoute>
             }
           />
@@ -59,23 +53,7 @@ const AppContent: React.FC = () => {
             path="/users"
             element={
               <ProtectedRoute requireAdmin>
-                <div style={{ padding: '2rem' }}>User Management - Coming Soon</div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/import"
-            element={
-              <ProtectedRoute requireAdmin>
-                <div style={{ padding: '2rem' }}>Data Import - Coming Soon</div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/analytics"
-            element={
-              <ProtectedRoute requireAdmin>
-                <DashboardPage />
+                <UserManagementPage />
               </ProtectedRoute>
             }
           />

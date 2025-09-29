@@ -13,10 +13,7 @@ import {
 import {
   Dashboard,
   Numbers,
-  People,
-  FileUpload,
-  History,
-  Analytics,
+  PersonAdd,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -44,33 +41,15 @@ const Sidebar: React.FC<SidebarProps> = ({
       roles: ["admin", "number_manager"],
     },
     {
-      text: "Number Management",
+      text: "Numbers",
       icon: <Numbers />,
       path: "/numbers",
       roles: ["admin", "number_manager"],
     },
     {
-      text: "Activity Logs",
-      icon: <History />,
-      path: "/logs",
-      roles: ["admin", "number_manager"],
-    },
-    {
-      text: "Analytics",
-      icon: <Analytics />,
-      path: "/analytics",
-      roles: ["admin"],
-    },
-    {
-      text: "User Management",
-      icon: <People />,
+      text: "Add Planner",
+      icon: <PersonAdd />,
       path: "/users",
-      roles: ["admin"],
-    },
-    {
-      text: "Data Import",
-      icon: <FileUpload />,
-      path: "/import",
       roles: ["admin"],
     },
   ];

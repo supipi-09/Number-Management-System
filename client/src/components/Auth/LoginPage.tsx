@@ -118,7 +118,7 @@ const LoginPage: React.FC = () => {
                   <em>Select role to auto-fill credentials</em>
                 </MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
-                <MenuItem value="number_manager">Number Manager</MenuItem>
+                <MenuItem value="number_manager">Planner</MenuItem>
               </Select>
             </FormControl>
             <TextField
