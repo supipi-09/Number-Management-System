@@ -14,9 +14,8 @@ import Header from "./components/Layout/Header";
 import Sidebar from "./components/Layout/Sidebar";
 import LoginPage from "./components/Auth/LoginPage";
 import DashboardPage from "./components/Dashboard/DashboardPage";
-import UserManagementPage from "./components/Users/UserManagementPage";
-import NumberManagementPage from "./components/Numbers/NumberManagementPage";
-import ActivityLogsPage from "./components/Logs/ActivityLogsPage";
+import AddPlannerPage from "./components/AddPlanner/AddPlannerPage";
+import NumberLogPage from "./components/NumberLog/NumberLogPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const AppContent: React.FC = () => {
@@ -24,7 +23,11 @@ const AppContent: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div>Loading...</div>
+      </Box>
+    );
   }
 
   if (!isAuthenticated) {
@@ -48,42 +51,18 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
-            path="/numbers"
+            path="/add-planner"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AddPlannerPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/number-log"
             element={
               <ProtectedRoute>
-                <NumberManagementPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logs"
-            element={
-              <ProtectedRoute>
-                <ActivityLogsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/users"
-            element={
-              <ProtectedRoute requireAdmin>
-                <UserManagementPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/import"
-            element={
-              <ProtectedRoute requireAdmin>
-                <div style={{ padding: "2rem" }}>Data Import - Coming Soon</div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/analytics"
-            element={
-              <ProtectedRoute requireAdmin>
-                <DashboardPage />
+                <NumberLogPage />
               </ProtectedRoute>
             }
           />

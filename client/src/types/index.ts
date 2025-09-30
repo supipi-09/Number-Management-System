@@ -38,6 +38,12 @@ export interface NumberLog {
   previousState?: Partial<NumberRecord>;
   newState?: Partial<NumberRecord>;
   notes?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
 }
 
 export interface DashboardStats {
@@ -54,9 +60,15 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface ApiResponse<T> {
+export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
   message?: string;
   error?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
 }

@@ -9,14 +9,12 @@ import {
   Divider,
   Box,
   Typography,
+  Toolbar,
 } from "@mui/material";
 import {
   Dashboard,
-  Numbers,
   People,
-  FileUpload,
   History,
-  Analytics,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -34,44 +32,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   const menuItems = [
     {
       text: "Dashboard",
       icon: <Dashboard />,
       path: "/dashboard",
-      roles: ["admin", "planner"],
-    },
-    {
-      text: "Number Management",
-      icon: <Numbers />,
-      path: "/numbers",
-      roles: ["admin", "planner"],
-    },
-    {
-      text: "Number Allocation Log",
-      icon: <History />,
-      path: "/logs",
-      roles: ["admin", "planner"],
-    },
-    {
-      text: "Analytics",
-      icon: <Analytics />,
-      path: "/analytics",
-      roles: ["admin"],
+      roles: ["admin", "planner"], 
     },
     {
       text: "Add Planner",
       icon: <People />,
-      path: "/users",
+      path: "/add-planner",
       roles: ["admin"],
     },
     {
-      text: "Data Import",
-      icon: <FileUpload />,
-      path: "/import",
-      roles: ["admin"],
+      text: "Number Log",
+      icon: <History />,
+      path: "/number-log",
+      roles: ["admin", "planner"],
     },
   ];
 
@@ -83,17 +63,18 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const filteredMenuItems = menuItems.filter((item) =>
-    item.roles.includes(isAdmin ? "admin" : "planner")
+    item.roles.includes(user?.role || "planner")
   );
 
   const drawerContent = (
     <>
+      <Toolbar />
       <Box sx={{ p: 2 }}>
         <Typography
           variant="h6"
           sx={{ fontWeight: 600, color: "primary.main" }}
         >
-          Menu
+          Navigation
         </Typography>
       </Box>
       <Divider />
@@ -106,13 +87,13 @@ const Sidebar: React.FC<SidebarProps> = ({
               selected={location.pathname === item.path}
               sx={{
                 "&.Mui-selected": {
-                  backgroundColor: "primary.light",
-                  color: "white",
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText",
                   "& .MuiListItemIcon-root": {
-                    color: "white",
+                    color: "primary.contrastText",
                   },
                   "&:hover": {
-                    backgroundColor: "primary.main",
+                    backgroundColor: "primary.dark",
                   },
                 },
               }}

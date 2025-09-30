@@ -1,37 +1,115 @@
 import React from "react";
-import { User, Bell, LogOut } from "lucide-react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Badge,
+  Box,
+  Avatar,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import {
+  Menu as MenuIcon,
+  Notifications,
+  AccountCircle,
+  Logout,
+} from "@mui/icons-material";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface HeaderProps {
-  userRole: string;
+  onMenuClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ userRole }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+  const { user, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleClose();
+  };
+
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Number Management Dashboard
-        </h1>
-        <div className="flex items-center gap-4">
-          <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <Bell size={20} />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-          <div className="flex items-center gap-3 pl-4 border-l border-gray-300">
-            <div className="text-right">
-              <p className="text-sm font-medium">Admin User</p>
-              <p className="text-xs text-gray-500">{userRole}</p>
-            </div>
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-              <User size={20} />
-            </div>
-          </div>
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600">
-            <LogOut size={20} />
-          </button>
-        </div>
-      </div>
-    </header>
+    <AppBar position="static" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={onMenuClick}
+          edge="start"
+          sx={{ mr: 2 }}
+        >
+          <MenuIcon />
+        </IconButton>
+        
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Number Management System
+        </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="error">
+              <Notifications />
+            </Badge>
+          </IconButton>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ textAlign: 'right', mr: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {user?.username}
+              </Typography>
+              <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                {user?.role === 'admin' ? 'Administrator' : 'Planner'}
+              </Typography>
+            </Box>
+            
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.dark' }}>
+                {user?.username?.charAt(0).toUpperCase()}
+              </Avatar>
+            </IconButton>
+            
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleLogout}>
+                <Logout sx={{ mr: 1 }} />
+                Logout
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
