@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
   Container,
+<<<<<<< HEAD
+=======
+  Paper,
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
   Typography,
   Button,
   TextField,
@@ -19,10 +23,13 @@ import {
   Alert,
   Chip,
   InputAdornment,
+<<<<<<< HEAD
   CircularProgress,
   Tooltip,
   Avatar,
   Card,
+=======
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
 } from "@mui/material";
 import {
   Add,
@@ -32,6 +39,7 @@ import {
   Person,
   Email,
   Phone,
+<<<<<<< HEAD
   Lock,
   Visibility,
   VisibilityOff,
@@ -54,26 +62,45 @@ const AddPlannerPage: React.FC = () => {
   const [planners, setPlanners] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+=======
+} from "@mui/icons-material";
+import { usersAPI } from "../../services/api";
+import { User } from "../../types";
+
+const AddPlannerPage: React.FC = () => {
+  const [planners, setPlanners] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [editingPlanner, setEditingPlanner] = useState<User | null>(null);
+<<<<<<< HEAD
   const [showPassword, setShowPassword] = useState(false);
+=======
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
+<<<<<<< HEAD
     phone: "",
     role: "planner" as const,
   });
 
   // Mock data for demonstration
+=======
+    role: "planner" as const,
+  });
+
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
   useEffect(() => {
     fetchPlanners();
   }, []);
 
   const fetchPlanners = async () => {
+<<<<<<< HEAD
     setLoading(true);
     // Simulate API call
     setTimeout(() => {
@@ -106,12 +133,28 @@ const AddPlannerPage: React.FC = () => {
       setPlanners(mockPlanners);
       setLoading(false);
     }, 500);
+=======
+    try {
+      setLoading(true);
+      const response = await usersAPI.getUsers();
+      if (response.success && response.data) {
+        // Filter only planners
+        const plannersOnly = response.data.filter(user => user.role === 'planner');
+        setPlanners(plannersOnly);
+      }
+    } catch (err) {
+      setError("Failed to fetch planners");
+    } finally {
+      setLoading(false);
+    }
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+<<<<<<< HEAD
     setSubmitting(true);
 
     // Simulate API call
@@ -146,12 +189,48 @@ const AddPlannerPage: React.FC = () => {
       handleCloseDialog();
       setSubmitting(false);
     }, 1000);
+=======
+
+    try {
+      if (editingPlanner) {
+        const response = await usersAPI.updateUser(editingPlanner._id, {
+          username: formData.username,
+          email: formData.email,
+        });
+        if (response.success) {
+          setSuccess("Planner updated successfully");
+          fetchPlanners();
+        }
+      } else {
+        const response = await usersAPI.createUser(formData);
+        if (response.success) {
+          setSuccess("Planner created successfully");
+          fetchPlanners();
+        }
+      }
+      handleCloseDialog();
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to save planner");
+    }
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this planner?")) {
+<<<<<<< HEAD
       setPlanners(planners.filter((p) => p._id !== id));
       setSuccess("Planner deleted successfully");
+=======
+      try {
+        const response = await usersAPI.deleteUser(id);
+        if (response.success) {
+          setSuccess("Planner deleted successfully");
+          fetchPlanners();
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Failed to delete planner");
+      }
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
     }
   };
 
@@ -161,7 +240,10 @@ const AddPlannerPage: React.FC = () => {
       username: planner.username,
       email: planner.email,
       password: "",
+<<<<<<< HEAD
       phone: planner.phone || "",
+=======
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
       role: "planner",
     });
     setOpenDialog(true);
@@ -170,12 +252,18 @@ const AddPlannerPage: React.FC = () => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingPlanner(null);
+<<<<<<< HEAD
     setShowPassword(false);
+=======
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
     setFormData({
       username: "",
       email: "",
       password: "",
+<<<<<<< HEAD
       phone: "",
+=======
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
       role: "planner",
     });
   };
@@ -183,6 +271,7 @@ const AddPlannerPage: React.FC = () => {
   const filteredPlanners = planners.filter(
     (planner) =>
       planner.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+<<<<<<< HEAD
       planner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (planner.phone && planner.phone.includes(searchTerm))
   );
@@ -219,20 +308,48 @@ const AddPlannerPage: React.FC = () => {
         {/* Alerts */}
         {error && (
           <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError("")}>
+=======
+      planner.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Paper sx={{ p: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Planner Management
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => setOpenDialog(true)}
+          >
+            Add New Planner
+          </Button>
+        </Box>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError("")}>
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
             {error}
           </Alert>
         )}
 
         {success && (
+<<<<<<< HEAD
           <Alert
             severity="success"
             sx={{ mb: 3 }}
             onClose={() => setSuccess("")}
           >
+=======
+          <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess("")}>
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
             {success}
           </Alert>
         )}
 
+<<<<<<< HEAD
         {/* Action Bar */}
         <Card sx={{ mb: 4, borderRadius: 2 }}>
           <Box sx={{ p: 3 }}>
@@ -615,3 +732,160 @@ const AddPlannerPage: React.FC = () => {
 };
 
 export default AddPlannerPage;
+=======
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search planners..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ mb: 3 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Username</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Created Date</TableCell>
+                <TableCell>Last Login</TableCell>
+                <TableCell align="center">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : filteredPlanners.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    No planners found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredPlanners.map((planner) => (
+                  <TableRow key={planner._id}>
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Person />
+                        {planner.username}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Email />
+                        {planner.email}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={planner.isActive ? "Active" : "Inactive"}
+                        color={planner.isActive ? "success" : "error"}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {new Date(planner.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {planner.lastLogin
+                        ? new Date(planner.lastLogin).toLocaleDateString()
+                        : "Never"}
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEdit(planner)}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDelete(planner._id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+
+      {/* Add/Edit Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <form onSubmit={handleSubmit}>
+          <DialogTitle>
+            {editingPlanner ? "Edit Planner" : "Add New Planner"}
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Username"
+              fullWidth
+              variant="outlined"
+              value={formData.username}
+              onChange={(e) =>
+                setFormData({ ...formData, username: e.target.value })
+              }
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Email"
+              type="email"
+              fullWidth
+              variant="outlined"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+              sx={{ mb: 2 }}
+            />
+            {!editingPlanner && (
+              <TextField
+                margin="dense"
+                label="Password"
+                type="password"
+                fullWidth
+                variant="outlined"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                required
+                sx={{ mb: 2 }}
+              />
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button type="submit" variant="contained">
+              {editingPlanner ? "Update" : "Create"}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    </Container>
+  );
+};
+
+export default AddPlannerPage;
+>>>>>>> fb23e715b509993ed282cf6b437a5f5fb642f511
