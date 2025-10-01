@@ -10,17 +10,20 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
+  Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Dashboard } from "@mui/icons-material";
-import { useAuth } from "../../contexts/AuthContext";
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  onLogin?: (username: string, password: string) => Promise<boolean>;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +31,17 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const success = await login({ username, password });
-      if (!success) {
-        setError("Invalid credentials. Please try again.");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      if (username === "admin" && password === "admin") {
+        if (onLogin) {
+          await onLogin(username, password);
+        }
+      } else {
+        setError("Invalid username or password");
       }
     } catch (err) {
-      setError("An error occurred during login.");
+      setError("An error occurred during login");
     } finally {
       setLoading(false);
     }
@@ -47,15 +55,16 @@ const LoginPage: React.FC = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          bgcolor: "grey.50",
         }}
       >
         <Paper
           elevation={8}
           sx={{
             p: 4,
-            width: "100%",
-            borderRadius: 2,
+            width: { xs: "95%", sm: "400px", md: "450px" },
+            maxWidth: "500px",
+            borderRadius: 3,
           }}
         >
           <Box
@@ -63,14 +72,31 @@ const LoginPage: React.FC = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              mb: 3,
+              mb: 4,
             }}
           >
-            <Dashboard sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />
+            <Box
+              sx={{
+                width: 64,
+                height: 64,
+                bgcolor: "primary.main",
+                borderRadius: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mb: 2,
+              }}
+            >
+              <Dashboard sx={{ fontSize: 40, color: "white" }} />
+            </Box>
             <Typography
               component="h1"
-              variant="h4"
-              sx={{ fontWeight: 600, textAlign: "center" }}
+              variant="h5"
+              sx={{
+                fontWeight: 600,
+                textAlign: "center",
+                color: "text.primary",
+              }}
             >
               Number Management System
             </Typography>
@@ -84,16 +110,17 @@ const LoginPage: React.FC = () => {
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 3 }}>
               {error}
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
               fullWidth
+              id="username"
               label="Username"
               name="username"
               autoComplete="username"
@@ -101,6 +128,7 @@ const LoginPage: React.FC = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={loading}
+              sx={{ mb: 2 }}
             />
             <TextField
               margin="normal"
@@ -109,15 +137,16 @@ const LoginPage: React.FC = () => {
               name="password"
               label="Password"
               type={showPassword ? "text" : "password"}
+              id="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
+              sx={{ mb: 2 }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
                       disabled={loading}
@@ -132,13 +161,60 @@ const LoginPage: React.FC = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
-              disabled={loading}
+              sx={{ mt: 3, mb: 2, py: 1.5, fontSize: "1rem", fontWeight: 500 }}
+              disabled={loading || !username || !password}
             >
-              {loading ? <CircularProgress size={24} /> : "Sign In"}
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "white" }} />
+              ) : (
+                "Sign In"
+              )}
             </Button>
+
+            <Box
+              sx={{
+                mt: 3,
+                p: 2,
+                bgcolor: "info.lighter",
+                border: "1px solid",
+                borderColor: "info.light",
+                borderRadius: 1,
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="info.dark"
+                sx={{ textAlign: "center" }}
+              >
+                <strong>Demo Credentials:</strong> Username: admin | Password:
+                admin
+              </Typography>
+            </Box>
+
+            <Box sx={{ mt: 3, textAlign: "center" }}>
+              <Link
+                href="#"
+                variant="body2"
+                sx={{
+                  color: "primary.main",
+                  textDecoration: "none",
+                  fontWeight: 500,
+                  "&:hover": { textDecoration: "underline" },
+                }}
+              >
+                Forgot password?
+              </Link>
+            </Box>
           </Box>
         </Paper>
+
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ position: "absolute", bottom: 20, textAlign: "center" }}
+        >
+          © 2025 Number Management System. All rights reserved.
+        </Typography>
       </Box>
     </Container>
   );

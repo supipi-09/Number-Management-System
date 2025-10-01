@@ -1,12 +1,33 @@
 import React from "react";
 import {
-  Edit2,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-  AlertCircle,
-  X,
-} from "lucide-react";
+  Box,
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  IconButton,
+  Pagination,
+  Typography,
+  Alert,
+  InputAdornment,
+} from "@mui/material";
+import {
+  Edit,
+  Delete,
+  Clear,
+  KeyboardArrowUp,
+  KeyboardArrowDown,
+  Search,
+} from "@mui/icons-material";
 
 interface NumberItem {
   id: number;
@@ -47,277 +68,250 @@ const NumberTable: React.FC<NumberTableProps> = ({
   onSearchChange,
   onStatusFilterChange,
 }) => {
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
   const getStatusColor = (status: string) => {
-    const colors = {
-      Available: "bg-green-100 text-green-800",
-      Allocated: "bg-blue-100 text-blue-800",
-      Reserved: "bg-orange-100 text-orange-800",
-      Held: "bg-red-100 text-red-800",
-      Quarantined: "bg-gray-100 text-gray-800",
+    const colors: {
+      [key: string]: "success" | "primary" | "warning" | "error" | "default";
+    } = {
+      Available: "success",
+      Allocated: "primary",
+      Reserved: "warning",
+      Held: "error",
+      Quarantined: "default",
     };
-    return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800";
+    return colors[status] || "default";
   };
 
-  const getStatusDot = (status: string) => {
-    const colors = {
-      Available: "bg-green-500",
-      Allocated: "bg-blue-500",
-      Reserved: "bg-orange-500",
-      Held: "bg-red-500",
-      Quarantined: "bg-gray-500",
-    };
-    return colors[status as keyof typeof colors] || "bg-gray-500";
-  };
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, data.length);
+  const paginatedData = data.slice(startIndex, endIndex);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+    <Card sx={{ borderRadius: 2, overflow: "hidden" }}>
       {/* Action Bar */}
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder="Search by number (e.g., 5551001)"
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-4 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-          <div className="relative">
-            <select
+      <Box sx={{ p: 3, bgcolor: "white" }}>
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", md: "row" }}
+          gap={2}
+          mb={2}
+        >
+          <TextField
+            placeholder="Search by number (e.g., 5551001)"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormControl sx={{ minWidth: 180 }}>
+            <InputLabel>Status</InputLabel>
+            <Select
               value={statusFilter}
+              label="Status"
               onChange={(e) => onStatusFilterChange(e.target.value)}
-              className="pl-4 pr-8 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none appearance-none bg-white min-w-[180px]"
             >
-              <option>All Statuses</option>
-              <option>Available</option>
-              <option>Allocated</option>
-              <option>Reserved</option>
-              <option>Held</option>
-              <option>Quarantined</option>
-            </select>
-          </div>
-        </div>
+              <MenuItem value="All Statuses">All Statuses</MenuItem>
+              <MenuItem value="Available">Available</MenuItem>
+              <MenuItem value="Allocated">Allocated</MenuItem>
+              <MenuItem value="Reserved">Reserved</MenuItem>
+              <MenuItem value="Held">Held</MenuItem>
+              <MenuItem value="Quarantined">Quarantined</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
         {(searchTerm || statusFilter !== "All Statuses") && (
-          <div className="flex gap-2 mt-3">
+          <Box display="flex" gap={1} flexWrap="wrap">
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                Search: {searchTerm}
-                <button
-                  onClick={() => onSearchChange("")}
-                  className="hover:bg-blue-200 rounded-full p-0.5"
-                >
-                  <X size={14} />
-                </button>
-              </span>
+              <Chip
+                label={`Search: ${searchTerm}`}
+                onDelete={() => onSearchChange("")}
+                deleteIcon={<Clear />}
+                color="primary"
+                size="small"
+              />
             )}
             {statusFilter !== "All Statuses" && (
-              <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                Status: {statusFilter}
-                <button
-                  onClick={() => onStatusFilterChange("All Statuses")}
-                  className="hover:bg-blue-200 rounded-full p-0.5"
-                >
-                  <X size={14} />
-                </button>
-              </span>
+              <Chip
+                label={`Status: ${statusFilter}`}
+                onDelete={() => onStatusFilterChange("All Statuses")}
+                deleteIcon={<Clear />}
+                color="primary"
+                size="small"
+              />
             )}
-          </div>
+          </Box>
         )}
-      </div>
+      </Box>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th
-                onClick={() => onSort("number")}
-                className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-2">
-                  Number
-                  {sortConfig.key === "number" && (
-                    <span>{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </div>
-              </th>
-              <th
-                onClick={() => onSort("status")}
-                className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-2">
-                  Status
-                  {sortConfig.key === "status" && (
-                    <span>{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </div>
-              </th>
-              <th
-                onClick={() => onSort("serviceType")}
-                className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-2">
-                  Service Type
-                  {sortConfig.key === "serviceType" && (
-                    <span>{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </div>
-              </th>
-              <th
-                onClick={() => onSort("specialType")}
-                className="px-6 py-4 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100"
-              >
-                <div className="flex items-center gap-2">
-                  Special Type
-                  {sortConfig.key === "specialType" && (
-                    <span>{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </div>
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                Allocated To
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                Remarks
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {currentItems.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={7}
-                  className="px-6 py-12 text-center text-gray-500"
-                >
-                  <AlertCircle className="mx-auto mb-2" size={48} />
-                  <p>No numbers found matching your filters</p>
-                </td>
-              </tr>
-            ) : (
-              currentItems.map((item) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {item.number}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full ${getStatusDot(
-                          item.status
-                        )}`}
-                      ></span>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          item.status
-                        )}`}
-                      >
-                        {item.status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
-                      {item.serviceType}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
-                      {item.specialType}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {item.allocatedTo || (
-                      <span className="text-gray-400 italic">
-                        Not allocated
-                      </span>
-                    )}
-                  </td>
-                  <td
-                    className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate"
-                    title={item.remarks}
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "grey.50" }}>
+              {[
+                { key: "number", label: "Number" },
+                { key: "status", label: "Status" },
+                { key: "serviceType", label: "Service Type" },
+                { key: "specialType", label: "Special Type" },
+                { key: "allocatedTo", label: "Allocated To" },
+                { key: "remarks", label: "Remarks" },
+                { key: "actions", label: "Actions" },
+              ].map((column) => (
+                <TableCell key={column.key}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={0.5}
+                    onClick={() =>
+                      column.key !== "actions" &&
+                      column.key !== "allocatedTo" &&
+                      column.key !== "remarks"
+                        ? onSort(column.key)
+                        : undefined
+                    }
+                    sx={{
+                      cursor:
+                        column.key !== "actions" &&
+                        column.key !== "allocatedTo" &&
+                        column.key !== "remarks"
+                          ? "pointer"
+                          : "default",
+                      userSelect: "none",
+                    }}
                   >
-                    {item.remarks || <span className="text-gray-400">—</span>}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <button
-                        className="p-1.5 hover:bg-blue-50 text-blue-600 rounded transition-colors"
-                        title="Edit"
-                      >
-                        <Edit2 size={16} />
-                      </button>
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      {column.label}
+                    </Typography>
+                    {sortConfig.key === column.key &&
+                      sortConfig.direction !== "null" &&
+                      (sortConfig.direction === "asc" ? (
+                        <KeyboardArrowUp fontSize="small" />
+                      ) : (
+                        <KeyboardArrowDown fontSize="small" />
+                      ))}
+                  </Box>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
+                  <Alert severity="info" sx={{ justifyContent: "center" }}>
+                    No numbers found matching your filters
+                  </Alert>
+                </TableCell>
+              </TableRow>
+            ) : (
+              paginatedData.map((item) => (
+                <TableRow key={item.id} hover>
+                  <TableCell>
+                    <Typography variant="body2" fontWeight="medium">
+                      {item.number}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={item.status}
+                      color={getStatusColor(item.status)}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={item.serviceType}
+                      variant="outlined"
+                      color="secondary"
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={item.specialType}
+                      variant="outlined"
+                      color="warning"
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body2"
+                      color={
+                        item.allocatedTo ? "text.primary" : "text.disabled"
+                      }
+                      fontStyle={item.allocatedTo ? "normal" : "italic"}
+                    >
+                      {item.allocatedTo || "Not allocated"}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body2"
+                      color={item.remarks ? "text.primary" : "text.disabled"}
+                      sx={{
+                        maxWidth: 200,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      title={item.remarks}
+                    >
+                      {item.remarks || "—"}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Box display="flex" gap={1}>
+                      <IconButton size="small" color="primary">
+                        <Edit fontSize="small" />
+                      </IconButton>
                       {userRole === "Admin" && (
-                        <button
-                          className="p-1.5 hover:bg-red-50 text-red-600 rounded transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <IconButton size="small" color="error">
+                          <Delete fontSize="small" />
+                        </IconButton>
                       )}
-                    </div>
-                  </td>
-                </tr>
+                    </Box>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       {/* Pagination */}
       {data.length > 0 && (
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Showing {indexOfFirstItem + 1}-
-            {Math.min(indexOfLastItem, data.length)} of {data.length} numbers
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onPageChange(1)}
-              disabled={currentPage === 1}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              First
-            </button>
-            <button
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <span className="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium">
-              {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronRight size={20} />
-            </button>
-            <button
-              onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              Last
-            </button>
-          </div>
-        </div>
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems="center"
+          gap={2}
+          p={3}
+          borderTop={1}
+          borderColor="grey.200"
+        >
+          <Typography variant="body2" color="text.secondary">
+            Showing {startIndex + 1}-{endIndex} of {data.length} numbers
+          </Typography>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(_, page) => onPageChange(page)}
+            color="primary"
+            showFirstButton
+            showLastButton
+          />
+        </Box>
       )}
-    </div>
+    </Card>
   );
 };
 

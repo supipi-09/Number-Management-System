@@ -9,33 +9,27 @@ import {
   Divider,
   Box,
   Typography,
+  Toolbar,
 } from "@mui/material";
-import {
-  Dashboard,
-  Numbers,
-  People,
-  FileUpload,
-  History,
-  Analytics,
-} from "@mui/icons-material";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { Dashboard, People, History } from "@mui/icons-material";
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
-  variant?: "temporary" | "permanent";
+  currentPath?: string;
+  onNavigate?: (path: string) => void;
+  userRole?: string;
 }
+
+const drawerWidth = 280;
 
 const Sidebar: React.FC<SidebarProps> = ({
   open,
   onClose,
-  variant = "temporary",
+  currentPath = "/dashboard",
+  onNavigate,
+  userRole = "admin",
 }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { isAdmin } = useAuth();
-
   const menuItems = [
     {
       text: "Dashboard",
@@ -44,102 +38,97 @@ const Sidebar: React.FC<SidebarProps> = ({
       roles: ["admin", "planner"],
     },
     {
-      text: "Number Management",
-      icon: <Numbers />,
-      path: "/numbers",
-      roles: ["admin", "planner"],
-    },
-    {
-      text: "Number Allocation Log",
-      icon: <History />,
-      path: "/logs",
-      roles: ["admin", "planner"],
-    },
-    {
-      text: "Analytics",
-      icon: <Analytics />,
-      path: "/analytics",
-      roles: ["admin"],
-    },
-    {
       text: "Add Planner",
       icon: <People />,
-      path: "/users",
+      path: "/add-planner",
       roles: ["admin"],
     },
     {
-      text: "Data Import",
-      icon: <FileUpload />,
-      path: "/import",
-      roles: ["admin"],
+      text: "Number Log",
+      icon: <History />,
+      path: "/number-log",
+      roles: ["admin", "planner"],
     },
   ];
 
   const handleItemClick = (path: string) => {
-    navigate(path);
-    if (variant === "temporary") {
+    if (onNavigate) {
+      onNavigate(path);
+    }
+    if (window.innerWidth < 900) {
       onClose();
     }
   };
 
   const filteredMenuItems = menuItems.filter((item) =>
-    item.roles.includes(isAdmin ? "admin" : "planner")
+    item.roles.includes(userRole)
   );
 
   const drawerContent = (
     <>
-      <Box sx={{ p: 2 }}>
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: 600, color: "primary.main" }}
-        >
-          Menu
-        </Typography>
-      </Box>
-      <Divider />
-
-      <List>
-        {filteredMenuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton
-              onClick={() => handleItemClick(item.path)}
-              selected={location.pathname === item.path}
-              sx={{
-                "&.Mui-selected": {
-                  backgroundColor: "primary.light",
-                  color: "white",
-                  "& .MuiListItemIcon-root": {
-                    color: "white",
-                  },
-                  "&:hover": {
+      <Toolbar />
+      <Box sx={{ overflow: "auto" }}>
+        <Box sx={{ p: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 600, color: "primary.main" }}
+          >
+            Navigation
+          </Typography>
+        </Box>
+        <Divider />
+        <List>
+          {filteredMenuItems.map((item) => (
+            <ListItem key={item.text} disablePadding>
+              <ListItemButton
+                onClick={() => handleItemClick(item.path)}
+                selected={currentPath === item.path}
+                sx={{
+                  "&.Mui-selected": {
                     backgroundColor: "primary.main",
+                    color: "primary.contrastText",
+                    "& .MuiListItemIcon-root": {
+                      color: "primary.contrastText",
+                    },
+                    "&:hover": { backgroundColor: "primary.dark" },
                   },
-                },
-              }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
     </>
   );
 
   return (
-    <Drawer
-      variant={variant}
-      open={open}
-      onClose={onClose}
-      sx={{
-        "& .MuiDrawer-paper": {
-          width: 280,
-          boxSizing: "border-box",
-        },
-      }}
-    >
-      {drawerContent}
-    </Drawer>
+    <>
+      <Drawer
+        variant="temporary"
+        open={open}
+        onClose={onClose}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: "none", md: "block" },
+          "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
+        }}
+        open
+      >
+        {drawerContent}
+      </Drawer>
+    </>
   );
 };
 
