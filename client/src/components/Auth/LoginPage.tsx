@@ -13,17 +13,21 @@ import {
   Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Dashboard } from "@mui/icons-material";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface LoginPageProps {
   onLogin?: (username: string, password: string) => Promise<boolean>;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+const LoginPage: React.FC<LoginPageProps> = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,12 +35,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const success = await login({ username, password });
 
-      if (username === "admin" && password === "admin") {
-        if (onLogin) {
-          await onLogin(username, password);
-        }
+      if (success) {
+        navigate("/dashboard");
       } else {
         setError("Invalid username or password");
       }

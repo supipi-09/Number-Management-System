@@ -12,12 +12,12 @@ import {
   Toolbar,
 } from "@mui/material";
 import { Dashboard, People, History } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
   currentPath?: string;
-  onNavigate?: (path: string) => void;
   userRole?: string;
 }
 
@@ -27,9 +27,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   open,
   onClose,
   currentPath = "/dashboard",
-  onNavigate,
   userRole = "admin",
 }) => {
+  const navigate = useNavigate();
+
   const menuItems = [
     {
       text: "Dashboard",
@@ -52,9 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const handleItemClick = (path: string) => {
-    if (onNavigate) {
-      onNavigate(path);
-    }
+    navigate(path);
     if (window.innerWidth < 900) {
       onClose();
     }

@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/Layout/MainLayout";
 import Dashboard from "./components/Dashboard/Dashboard";
 import AddPlannerPage from "./components/AddPlanner/AddPlannerPage";
@@ -14,50 +17,30 @@ const theme = createTheme({
 });
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentPath, setCurrentPath] = useState("/dashboard");
-  const [user, setUser] = useState({ name: "Admin User", role: "admin" });
-
-  const handleLogin = async (username: string, password: string) => {
-    if (username === "admin" && password === "admin") {
-      setIsAuthenticated(true);
-      setUser({ name: "Admin User", role: "admin" });
-      return true;
-    }
-    return false;
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUser({ name: "", role: "" });
-    setCurrentPath("/dashboard");
-  };
-
-  const handleNavigate = (path: string) => {
-    setCurrentPath(path);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <ThemeProvider theme={theme}>
-        <LoginPage onLogin={handleLogin} />
-      </ThemeProvider>
-    );
-  }
-
   return (
     <ThemeProvider theme={theme}>
-      <MainLayout
-        currentPath={currentPath}
-        onNavigate={handleNavigate}
-        userName={user.name}
-        userRole={user.role}
-        onLogout={handleLogout}
-      >
-        {currentPath === "/dashboard" && <Dashboard />}
-        {currentPath === "/add-planner" && <AddPlannerPage />}
-        {currentPath === "/number-log" && <NumberLog />}
-      </MainLayout>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/add-planner" element={<AddPlannerPage />} />
+                      <Route path="/number-log" element={<NumberLog />} />
+                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    </Routes>
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
     </ThemeProvider>
   );
 };
