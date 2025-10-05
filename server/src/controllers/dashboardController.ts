@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-import Number from '../models/Number';
-import NumberLog from '../models/NumberLog';
-import User from '../models/User';
+import { Request, Response } from "express";
+import Number from "../models/Number";
+import NumberLog from "../models/NumberLog";
+import User from "../models/User";
 
 export const getDashboardSummary = async (req: Request, res: Response) => {
   try {
@@ -9,33 +9,37 @@ export const getDashboardSummary = async (req: Request, res: Response) => {
     const numberStats = await Number.aggregate([
       {
         $group: {
-          _id: '$status',
-          count: { $sum: 1 }
-        }
-      }
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
     const totalNumbers = await Number.countDocuments();
-    
+
     const summary = {
       totalNumbers,
-      allocatedNumbers: numberStats.find(s => s._id === 'Allocated')?.count || 0,
-      availableNumbers: numberStats.find(s => s._id === 'Available')?.count || 0,
-      reservedNumbers: numberStats.find(s => s._id === 'Reserved')?.count || 0,
-      heldNumbers: numberStats.find(s => s._id === 'Held')?.count || 0,
-      quarantinedNumbers: numberStats.find(s => s._id === 'Quarantined')?.count || 0
+      allocatedNumbers:
+        numberStats.find((s) => s._id === "Allocated")?.count || 0,
+      availableNumbers:
+        numberStats.find((s) => s._id === "Available")?.count || 0,
+      reservedNumbers:
+        numberStats.find((s) => s._id === "Reserved")?.count || 0,
+      heldNumbers: numberStats.find((s) => s._id === "Held")?.count || 0,
+      quarantinedNumbers:
+        numberStats.find((s) => s._id === "Quarantined")?.count || 0,
     };
 
     res.json({
       success: true,
       data: summary,
-      message: 'Dashboard summary retrieved successfully'
+      message: "Dashboard summary retrieved successfully",
     });
   } catch (error) {
-    console.error('Get dashboard summary error:', error);
+    console.error("Get dashboard summary error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 };
@@ -50,22 +54,22 @@ export const getDashboardAnalytics = async (req: Request, res: Response) => {
       {
         $match: {
           timestamp: { $gte: twelveMonthsAgo },
-          action: { $in: ['Allocated', 'Released', 'Reserved'] }
-        }
+          action: { $in: ["Allocated", "Released", "Reserved"] },
+        },
       },
       {
         $group: {
           _id: {
-            year: { $year: '$timestamp' },
-            month: { $month: '$timestamp' },
-            action: '$action'
+            year: { $year: "$timestamp" },
+            month: { $month: "$timestamp" },
+            action: "$action",
           },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
-        $sort: { '_id.year': 1, '_id.month': 1 }
-      }
+        $sort: { "_id.year": 1, "_id.month": 1 },
+      },
     ]);
 
     // Get service type distribution
@@ -73,22 +77,22 @@ export const getDashboardAnalytics = async (req: Request, res: Response) => {
       {
         $group: {
           _id: {
-            serviceType: '$serviceType',
-            status: '$status'
+            serviceType: "$serviceType",
+            status: "$status",
           },
-          count: { $sum: 1 }
-        }
-      }
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
     // Get special type distribution
     const specialTypeStats = await Number.aggregate([
       {
         $group: {
-          _id: '$specialType',
-          count: { $sum: 1 }
-        }
-      }
+          _id: "$specialType",
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
     // Get recent activity (last 7 days)
@@ -96,48 +100,48 @@ export const getDashboardAnalytics = async (req: Request, res: Response) => {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const recentActivity = await NumberLog.find({
-      timestamp: { $gte: sevenDaysAgo }
+      timestamp: { $gte: sevenDaysAgo },
     })
-    .populate('performedBy', 'username')
-    .sort({ timestamp: -1 })
-    .limit(10);
+      .populate("performedBy", "username")
+      .sort({ timestamp: -1 })
+      .limit(10);
 
     // Get user activity stats
     const userActivityStats = await NumberLog.aggregate([
       {
         $match: {
-          timestamp: { $gte: sevenDaysAgo }
-        }
+          timestamp: { $gte: sevenDaysAgo },
+        },
       },
       {
         $group: {
-          _id: '$performedBy',
-          activityCount: { $sum: 1 }
-        }
+          _id: "$performedBy",
+          activityCount: { $sum: 1 },
+        },
       },
       {
         $lookup: {
-          from: 'users',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'user'
-        }
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
       },
       {
-        $unwind: '$user'
+        $unwind: "$user",
       },
       {
         $project: {
-          username: '$user.username',
-          activityCount: 1
-        }
+          username: "$user.username",
+          activityCount: 1,
+        },
       },
       {
-        $sort: { activityCount: -1 }
+        $sort: { activityCount: -1 },
       },
       {
-        $limit: 5
-      }
+        $limit: 5,
+      },
     ]);
 
     const analytics = {
@@ -145,19 +149,19 @@ export const getDashboardAnalytics = async (req: Request, res: Response) => {
       serviceTypeStats,
       specialTypeStats,
       recentActivity,
-      userActivityStats
+      userActivityStats,
     };
 
     res.json({
       success: true,
       data: analytics,
-      message: 'Dashboard analytics retrieved successfully'
+      message: "Dashboard analytics retrieved successfully",
     });
   } catch (error) {
-    console.error('Get dashboard analytics error:', error);
+    console.error("Get dashboard analytics error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 };
@@ -167,7 +171,7 @@ export const getSystemHealth = async (req: Request, res: Response) => {
     const totalNumbers = await Number.countDocuments();
     const totalUsers = await User.countDocuments();
     const totalLogs = await NumberLog.countDocuments();
-    
+
     // Get database performance metrics
     const dbStats = {
       totalNumbers,
@@ -175,19 +179,19 @@ export const getSystemHealth = async (req: Request, res: Response) => {
       totalLogs,
       uptime: process.uptime(),
       memoryUsage: process.memoryUsage(),
-      nodeVersion: process.version
+      nodeVersion: process.version,
     };
 
     res.json({
       success: true,
       data: dbStats,
-      message: 'System health retrieved successfully'
+      message: "System health retrieved successfully",
     });
   } catch (error) {
-    console.error('Get system health error:', error);
+    console.error("Get system health error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 };
