@@ -30,7 +30,14 @@ const App: React.FC = () => {
                   <MainLayout>
                     <Routes>
                       <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/add-planner" element={<AddPlannerPage />} />
+                      <Route
+                        path="/add-planner"
+                        element={
+                          <ProtectedRoute requireAdmin={true}>
+                            <AddPlannerPage />
+                          </ProtectedRoute>
+                        }
+                      />
                       <Route path="/number-log" element={<NumberLog />} />
                       <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
